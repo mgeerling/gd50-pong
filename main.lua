@@ -50,6 +50,14 @@ VIRTUAL_HEIGHT = 243
 -- paddle movement speed
 PADDLE_SPEED = 200
 
+--IDEAS 
+-- make it so that the AI can lose 
+-- lower AIs reaction time - so that it doesn't constantly react 
+-- add a second ball 
+-- varying paddle size ? (power ups)
+-- power ups 
+
+
 --[[
     Called just once at the beginning of the game; used to set up
     game objects, variables, etc. and prepare the game world.
@@ -233,13 +241,26 @@ function love.update(dt)
     -- paddles can move no matter what state we're in
     --
     -- player 1
-    if love.keyboard.isDown('w') then
+    -- TODO - implement AI for this section paddle 
+    -- if love.keyboard.isDown('w') then
+    --     player1.dy = -PADDLE_SPEED
+    -- elseif love.keyboard.isDown('s') then
+    --     player1.dy = PADDLE_SPEED
+    -- else
+    --     player1.dy = 0
+    -- end
+
+    -- check ball's position and move toward where it is headed 
+    -- the ball is below the paddle 
+    if ball.y > player1.y+player1.height then 
+        player1.dy = PADDLE_SPEED 
+    -- the ball is above the paddle 
+    elseif ball.y + ball.height < player1.y then 
         player1.dy = -PADDLE_SPEED
-    elseif love.keyboard.isDown('s') then
-        player1.dy = PADDLE_SPEED
-    else
-        player1.dy = 0
+    else 
+        player1.dy = 0 
     end
+
 
     -- player 2
     if love.keyboard.isDown('up') then
