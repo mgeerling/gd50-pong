@@ -50,6 +50,19 @@ function Paddle:update(dt)
     end
 end
 
+--takes a power up and applies it to game (self implemented for bonus)
+function Paddle:powerup(type)
+    --make paddle bigger
+    if type == "big" then 
+        self.height = math.min(self.height * 2, VIRTUAL_WIDTH / 3)
+    end 
+    --reset paddle to original size
+    if type == "reset" then 
+        self.height = 20
+    end 
+
+end 
+
 --[[
     To be called by our main function in `love.draw`, ideally. Uses
     LÖVE2D's `rectangle` function, which takes in a draw mode as the first

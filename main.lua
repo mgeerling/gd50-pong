@@ -51,10 +51,10 @@ VIRTUAL_HEIGHT = 243
 PADDLE_SPEED = 200
 
 --IDEAS 
--- make it so that the AI can lose 
--- lower AIs reaction time - so that it doesn't constantly react 
+-- make it so that the AI can lose (already can happen)
+-- lower AIs reaction time - so that it doesn't constantly react -- DONE (used negative ball speed as indicator)
 -- add a second ball 
--- varying paddle size ? (power ups)
+-- varying paddle size -- DONE added as a loss mgmt (difficulty item)
 -- power ups 
 
 
@@ -169,6 +169,7 @@ function love.update(dt)
 
             sounds['paddle_hit']:play()
         end
+        --this is redundant and could be rewritten. could base position change on ball width and xvelocity 
         if ball:collides(player2) then
             ball.dx = -ball.dx * 1.03
             ball.x = player2.x - 4
@@ -211,6 +212,7 @@ function love.update(dt)
                 winningPlayer = 2
                 gameState = 'done'
             else
+                checkScore()
                 gameState = 'serve'
                 -- places the ball in the middle of the screen, no velocity
                 ball:reset()
@@ -230,6 +232,7 @@ function love.update(dt)
                 winningPlayer = 1
                 gameState = 'done'
             else
+                checkScore()
                 gameState = 'serve'
                 -- places the ball in the middle of the screen, no velocity
                 ball:reset()
@@ -241,7 +244,6 @@ function love.update(dt)
     -- paddles can move no matter what state we're in
     --
     -- player 1
-    -- TODO - implement AI for this section paddle 
     -- if love.keyboard.isDown('w') then
     --     player1.dy = -PADDLE_SPEED
     -- elseif love.keyboard.isDown('s') then
@@ -250,16 +252,19 @@ function love.update(dt)
     --     player1.dy = 0
     -- end
 
-    -- check ball's position and move toward where it is headed 
-    -- the ball is below the paddle 
-    if ball.y > player1.y+player1.height then 
-        player1.dy = PADDLE_SPEED 
-    -- the ball is above the paddle 
-    elseif ball.y + ball.height < player1.y then 
-        player1.dy = -PADDLE_SPEED
-    else 
-        player1.dy = 0 
-    end
+    --pset 0 - implement AI for paddle 
+    if ball.dx < 0 then 
+        -- check ball's position and move toward where it is headed 
+        -- the ball is below the paddle 
+        if ball.y > player1.y+player1.height then 
+            player1.dy = PADDLE_SPEED 
+        -- the ball is above the paddle 
+        elseif ball.y + ball.height < player1.y then 
+            player1.dy = -PADDLE_SPEED
+        else 
+            player1.dy = 0 
+        end
+    end 
 
 
     -- player 2
@@ -388,3 +393,20 @@ function displayFPS()
     love.graphics.setColor(0, 1, 0, 1)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10)
 end
+
+--[[
+    Bonus function for giving powerups to losers 
+]]
+function checkScore()
+    -- if either player is losing by more than 2 points then give them a power up 
+    if math.abs(player1Score - player2Score) > 2 then 
+        if player1Score > player2Score then 
+            player2:powerup("big")        
+        else
+            player1:powerup("big") 
+        end 
+    else 
+        player1:powerup("reset")
+        player2:powerup("reset")
+    end 
+end 
